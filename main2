@@ -1,0 +1,53 @@
+#include <iostream>
+#include <algorithm> // для std::min
+
+// Прототипы функций
+int* extend(const int* s, size_t k, size_t d, int filler);
+void extend(int** ptr_a, size_t k, size_t d, int filler);
+
+// Функция, которая создает новый массив
+int* extend(const int* s, size_t k, size_t d, int filler) {
+    int* new_array = new int[d];
+    
+    // Копируем элементы из исходного массива
+    for (size_t i = 0; i < std::min(k, d); i++) {
+        new_array[i] = s[i];  // исправлено: было a[i], должно быть s[i]
+    }
+    
+    // Заполняем оставшиеся элементы filler-ом
+    for (size_t i = std::min(k, d); i < d; i++) {
+        new_array[i] = filler;
+    }
+    
+    return new_array;  // добавлен возврат значения
+}
+
+// Функция, которая изменяет существующий массив
+void extend(int** ptr_a, size_t k, size_t d, int filler) {
+    // Создаем новый расширенный массив
+    int* new_array = extend(*ptr_a, k, d, filler);
+    
+    // Освобождаем старую память
+    delete[] *ptr_a;
+    
+    // Заменяем указатель на новый массив
+    *ptr_a = new_array;
+}
+
+// Пример использования
+int main() {
+    // Создаем исходный массив в куче
+    int* array = new int[5]{1, 2, 3, 4, 5};
+    
+    // Расширяем массив "на месте"
+    extend(&array, 5, 8, 0);
+    
+    // Выводим результат
+    for (size_t i = 0; i < 8; i++) {
+        std::cout << array[i] << " ";
+    }
+    
+    // Освобождаем память
+    delete[] array;
+    return 0;
+}
